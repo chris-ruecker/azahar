@@ -3,6 +3,7 @@
 // Refer to the license.txt file included.
 
 #include <chrono>
+#include <cstdlib> // for std::getenv
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -12,9 +13,8 @@
 
 #ifdef _WIN32
 // windows.h needs to be included before shellapi.h
-#include <windows.h>
-
 #include <shellapi.h>
+#include <windows.h>
 #endif
 
 #include "common/common_paths.h"
@@ -159,6 +159,13 @@ static void InitializeLogging(const std::string& log_file) {
     Common::Log::Start();
 }
 
+static const char* GetEnvNonEmpty(const char* name) {
+    if (const char* v = std::getenv(name)) {
+        return *v ? v : nullptr;
+    }
+    return nullptr;
+}
+
 /// Application entry point
 void LaunchRoom(int argc, char** argv, bool called_by_option) {
     Common::DetachedTasks detached_tasks;
@@ -182,6 +189,50 @@ void LaunchRoom(int argc, char** argv, bool called_by_option) {
     u64 preferred_game_id = 0;
     u16 port = Network::DefaultRoomPort;
     u32 max_members = 16;
+
+    // ---- Environment variable defaults (CLI flags still override) ----
+
+    if (const char* v = GetEnvNonEmpty("AZAHAR_ROOMNAME")) {
+        room_name = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_PORT")) {
+        port = static_cast<u16>(strtoul(v, &endarg, 0)); // base 0: supports 123 or 0x7B
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_MAXMEMBERS")) {
+        max_members = strtoul(v, &endarg, 0);
+    }
+
+    if (const char* v = GetEnvNonEmpty("AZAHAR_ROOMDESC")) {
+        room_description = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_PREFAPP")) {
+        preferred_game = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_PREFAPPID")) {
+        // match CLI: parse as hex; ignore "0"
+        if (std::strcmp(v, "0") != 0) {
+            preferred_game_id = strtoull(v, &endarg, 16);
+        }
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_PASSWORD")) {
+        password = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_USERNAME")) {
+        username = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_TOKEN")) {
+        token = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_WEBAPIURL")) {
+        web_api_url = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_BANLISTFILE")) {
+        ban_list_file = v;
+    }
+    if (const char* v = GetEnvNonEmpty("AZAHAR_LOGFILE")) {
+        log_file = v; // default stays "citra-room.log" if unset
+    }
+    // ------------------------------------------------------------------
 
     static struct option long_options[] = {
         {"room-name", required_argument, 0, 'n'},
