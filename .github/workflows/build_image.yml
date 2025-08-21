@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout (with submodules)
@@ -46,7 +46,7 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             # latest on main
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
             # branch tags (e.g., main, feature/foo)
             type=ref,event=branch
             # git tag pushes (e.g., v1.2.3)
