@@ -1,0 +1,23 @@
+version: '3'
+services:
+  azahar:
+    image: ghcr.io/azahar-emu/azahar/azahar:latest
+    ports: 
+      - "24872:24873/udp"
+    environment:
+      - AZAHAR_PORT=24873
+      - AZAHAR_ROOMNAME=Azahar Room
+      - AZAHAR_MAXMEMBERS=10
+      - AZAHAR_ROOMDESC=
+      - AZAHAR_PREFAPP="Pokemon Omega Ruby"
+      - AZAHAR_PREFAPPID=000400000011C400
+      - AZAHAR_PASSWORD=1234
+      - AZAHAR_ISPUBLIC=0
+      - AZAHAR_USERNAME=azahar
+      - AZAHAR_TOKEN=
+      - AZAHAR_WEBAPIURL=
+      # - AZAHAR_BANLISTFILE=bannedlist.cbl
+      # - AZAHAR_LOGFILE=azahar-room.log
+    # volumes:
+    #   - ./bannedlist.cbl:/bannedlist.cbl
+    #   - ./azahar-room.log:/azahar-room.log
