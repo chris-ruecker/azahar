@@ -404,6 +404,9 @@ void LaunchRoom(int argc, char** argv, bool called_by_option) {
             std::cout << "Failed to create room: \n\n";
             exit(-1);
         }
+
+        std::cout << "Listening on port " << port << "\n\n";
+
         std::cout << "Room is open. Close with Q+Enter...\n\n";
         auto announce_session = std::make_unique<Network::AnnounceMultiplayerSession>();
         if (announce) {
