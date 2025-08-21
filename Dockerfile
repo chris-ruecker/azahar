@@ -49,7 +49,7 @@ RUN strip -s bin/Release/azahar-room
 
 RUN mkdir /azahar && chown 2048 /azahar
 
-FROM gcr.io/distroless/cc-debian12
+FROM gcr.io/distroless/static-debian12
 
 ENV AZAHAR_PORT=24872
 ENV AZAHAR_ROOMNAME="Azahar Room"
